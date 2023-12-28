@@ -1,7 +1,6 @@
 import {Component} from 'react'
 import Cookies from 'js-cookie'
 import {GiGamepad} from 'react-icons/gi'
-import axios from 'axios'
 import Header from '../Header'
 import DesktopNavigationTabs from '../NavigationMenuContainer'
 import LoaderView from '../Loader'
@@ -32,6 +31,41 @@ class Gaming extends Component {
     this.getGamingVideos()
   }
 
+  //   getGamingVideos = async () => {
+  //     this.setState({apiStatus: apiFetchStatus.fetching})
+
+  //     const jwtToken = Cookies.get('jwt_token')
+
+  //     const url = 'https://apis.ccbp.in/videos/gaming'
+  //     const options = {
+  //       headers: {
+  //         Authorization: `Bearer ${jwtToken} `,
+  //       },
+  //     }
+
+  //     try {
+  //       // Data Fetching through axios
+  //       const response = await axios.get(url, options)
+  //       const {data} = response
+  //       const {videos} = data
+
+  //       const formattedVideosData = videos.map(eachItem => ({
+  //         id: eachItem.id,
+  //         title: eachItem.title,
+  //         thumbnailUrl: eachItem.thumbnail_url,
+  //         viewCount: eachItem.view_count,
+  //       }))
+
+  //       this.setState({
+  //         gamesList: formattedVideosData,
+  //         apiStatus: apiFetchStatus.success,
+  //       })
+  //     } catch (err) {
+  //       this.setState({apiStatus: apiFetchStatus.failure})
+  //       console.log(err?.response?.data?.error_msg)
+  //     }
+  //   }
+
   getGamingVideos = async () => {
     this.setState({apiStatus: apiFetchStatus.fetching})
 
@@ -45,9 +79,9 @@ class Gaming extends Component {
     }
 
     try {
-      // Data Fetching through axios
-      const response = await axios.get(url, options)
-      const {data} = response
+      // Data Fetching through fetch
+      const response = await fetch(url, options)
+      const data = await response.json()
       const {videos} = data
 
       const formattedVideosData = videos.map(eachItem => ({

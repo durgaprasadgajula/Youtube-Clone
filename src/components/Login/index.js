@@ -1,7 +1,7 @@
 import {Component} from 'react'
 import {Redirect} from 'react-router-dom'
 import Cookies from 'js-cookie'
-import axios from 'axios'
+
 import NxtWatchContext from '../../context/NxtWatchContext'
 import {
   LoginPageContainer,
@@ -46,6 +46,34 @@ class Login extends Component {
     return 'valid'
   }
 
+  //   authenticateUser = async () => {
+  //     const {username, password} = this.state
+  //     const userDetailsObject = {
+  //       username,
+  //       password,
+  //     }
+  //     const url = 'https://apis.ccbp.in/login'
+  //     const body = JSON.stringify(userDetailsObject)
+
+  //     try {
+  //       //   Data Posting through axios
+  //       const response = await axios.post(url, body)
+  //       const {data} = response
+  //       const jwtToken = data.jwt_token
+
+  //       //   Setting Up Cookies
+  //       Cookies.set('jwt_token', jwtToken, {expires: 30})
+
+  //       const {history} = this.props
+  //       //   Directing user to Home page
+  //       history.replace('/')
+  //     } catch (error) {
+  //       const errorMsg = error?.response?.data?.error_msg
+  //       console.log(errorMsg)
+  //       this.setState({errorMsg})
+  //     }
+  //   }
+
   authenticateUser = async () => {
     const {username, password} = this.state
     const userDetailsObject = {
@@ -53,19 +81,26 @@ class Login extends Component {
       password,
     }
     const url = 'https://apis.ccbp.in/login'
-    const body = JSON.stringify(userDetailsObject)
+    const options = {
+      method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //     'Access-Control-Allow-Origin': '*',
+      //   },
+      body: JSON.stringify(userDetailsObject),
+    }
 
     try {
-      //   Data Posting through axios
-      const response = await axios.post(url, body)
-      const {data} = response
+      // Data Posting through fetch
+      const response = await fetch(url, options)
+      const data = await response.json()
       const jwtToken = data.jwt_token
 
-      //   Setting Up Cookies
+      // Setting Up Cookies
       Cookies.set('jwt_token', jwtToken, {expires: 30})
 
       const {history} = this.props
-      //   Directing user to Home page
+      // Directing user to Home page
       history.replace('/')
     } catch (error) {
       const errorMsg = error?.response?.data?.error_msg

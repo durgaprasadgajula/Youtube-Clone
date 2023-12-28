@@ -1,7 +1,7 @@
 import {Component} from 'react'
 import Cookies from 'js-cookie'
 import {AiTwotoneFire} from 'react-icons/ai'
-import axios from 'axios'
+// import axios from 'axios'
 import Header from '../Header'
 import DesktopNavigationTabs from '../NavigationMenuContainer'
 import LoaderView from '../Loader'
@@ -33,6 +33,38 @@ class Trending extends Component {
     this.getTrendingVideos()
   }
 
+  //   getTrendingVideos = async () => {
+  //     this.setState({apiStatus: apiFetchStatus.fetching})
+  //     const jwtToken = Cookies.get('jwt_token')
+  //     const url = 'https://apis.ccbp.in/videos/trending'
+  //     const options = {
+  //       headers: {
+  //         Authorization: `Bearer ${jwtToken}`,
+  //       },
+  //     }
+  //     try {
+  //       const response = await axios.get(url, options)
+  //       const {data} = response
+  //       const {videos} = data
+
+  //       const formattedVideosData = videos.map(eachItem => ({
+  //         channel: eachItem.channel,
+  //         id: eachItem.id,
+  //         title: eachItem.title,
+  //         publishedAt: eachItem.published_at,
+  //         thumbnailUrl: eachItem.thumbnail_url,
+  //         viewCount: eachItem.view_count,
+  //       }))
+
+  //       this.setState({
+  //         apiStatus: apiFetchStatus.success,
+  //         videosList: formattedVideosData,
+  //       })
+  //     } catch (err) {
+  //       this.setState({apiStatus: apiFetchStatus.failure})
+  //       console.log(err?.response?.data?.error_msg)
+  //     }
+  //   }
   getTrendingVideos = async () => {
     this.setState({apiStatus: apiFetchStatus.fetching})
     const jwtToken = Cookies.get('jwt_token')
@@ -42,9 +74,15 @@ class Trending extends Component {
         Authorization: `Bearer ${jwtToken}`,
       },
     }
+
     try {
-      const response = await axios.get(url, options)
-      const {data} = response
+      const response = await fetch(url, options)
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`)
+      }
+
+      const data = await response.json()
       const {videos} = data
 
       const formattedVideosData = videos.map(eachItem => ({
@@ -62,7 +100,7 @@ class Trending extends Component {
       })
     } catch (err) {
       this.setState({apiStatus: apiFetchStatus.failure})
-      console.log(err?.response?.data?.error_msg)
+      console.error('Fetch error:', err.message)
     }
   }
 

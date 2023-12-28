@@ -1,7 +1,7 @@
 import {Component} from 'react'
 import Cookies from 'js-cookie'
 import {MdClose, BiSearchAlt2} from 'react-icons/all'
-import axios from 'axios'
+// import axios from 'axios'
 import Header from '../Header'
 import HomeVideoItemCard from '../HomeVideoItemCard'
 import DesktopNavigationTabs from '../NavigationMenuContainer'
@@ -78,12 +78,64 @@ class Home extends Component {
     this.previousController.abort()
   }
 
+  //   fetchVideos = async () => {
+  //     this.setState({apiStatus: apiFetchStatus.fetching})
+
+  //     // Creating a fresh `AbortController` instance for every HTTP request and
+  //     // passing the `signal` object of the `controller` as a value to the
+  //     // signal property in axios configuration
+  //     const controller = new AbortController()
+  //     this.previousController = controller
+
+  //     const jwtToken = Cookies.get('jwt_token')
+  //     const {searchQuery} = this.state
+
+  //     const url = `https://apis.ccbp.in/videos/all?search=${searchQuery}`
+  //     const options = {
+  //       headers: {
+  //         Authorization: `Bearer ${jwtToken}`,
+  //       },
+  //       signal: controller.signal,
+  //     }
+
+  //     try {
+  //       // Fetching Videos through  Axios
+  //       const response = await axios.get(url, options)
+  //       const {data} = response
+  //       const {videos} = data
+
+  //       const formattedVideosData = videos.map(eachItem => ({
+  //         channel: eachItem.channel,
+  //         id: eachItem.id,
+  //         title: eachItem.title,
+  //         publishedAt: eachItem.published_at,
+  //         thumbnailUrl: eachItem.thumbnail_url,
+  //         viewsCount: eachItem.view_count,
+  //       }))
+
+  //       this.setState({
+  //         videosList: formattedVideosData,
+  //         apiStatus: apiFetchStatus.success,
+  //       })
+  //     } catch (err) {
+  //       // Handling the error that raised due to 'request abortion' and returning from the function to not to execute the rest of the function body
+  //       if (axios.isCancel(err)) {
+  //         console.log(`Request ${err.message}`)
+  //         return
+  //       }
+
+  //       //   Axios error message from the server
+  //       console.log(err.response?.data?.error_msg)
+
+  //       this.setState({apiStatus: apiFetchStatus.failure})
+  //     }
+  //   }
   fetchVideos = async () => {
     this.setState({apiStatus: apiFetchStatus.fetching})
 
     // Creating a fresh `AbortController` instance for every HTTP request and
     // passing the `signal` object of the `controller` as a value to the
-    // signal property in axios configuration
+    // signal property in the fetch configuration
     const controller = new AbortController()
     this.previousController = controller
 
@@ -99,9 +151,9 @@ class Home extends Component {
     }
 
     try {
-      // Fetching Videos through  Axios
-      const response = await axios.get(url, options)
-      const {data} = response
+      // Fetching Videos through fetch
+      const response = await fetch(url, options)
+      const data = await response.json()
       const {videos} = data
 
       const formattedVideosData = videos.map(eachItem => ({
@@ -118,14 +170,14 @@ class Home extends Component {
         apiStatus: apiFetchStatus.success,
       })
     } catch (err) {
-      // Handling the error that raised due to 'request abortion' and returning from the function to not to execute the rest of the function body
-      if (axios.isCancel(err)) {
-        console.log(`Request ${err.message}`)
+      // Handling the error that raised due to 'request abortion' and returning from the function to not execute the rest of the function body
+      if (err.name === 'AbortError') {
+        console.log(`Request aborted: ${err.message}`)
         return
       }
 
-      //   Axios error message from the server
-      console.log(err.response?.data?.error_msg)
+      // Axios error message from the server
+      console.log(err)
 
       this.setState({apiStatus: apiFetchStatus.failure})
     }
